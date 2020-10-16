@@ -12,11 +12,15 @@ library(tidyverse)
 
 # Define UI for application that draws a histogram
 mpg %>% select_if(is.character)  -> mpgChr
+
 ui <- fluidPage(
      
-    varSelectInput("x", label = "X variable", data = mpg),
-    varSelectInput("y", label = "Y variable", data = mpg),
-    varSelectInput("colorb", label = "Color variable (categorical)",  mpgChr),
+    varSelectInput("x", label = "X variable",
+                   data = mpg, selected = "cty"),
+    varSelectInput("y", label = "Y variable",
+                   data = mpg, selected = "hwy"),
+    varSelectInput("color", label = "Color variable (categorical)",
+                   data = mpgChr, selected = "class"),
     plotOutput("plot")
 )
 
@@ -24,7 +28,8 @@ ui <- fluidPage(
 server <- function(input, output) {
     output$plot <- renderPlot({
         ggplot(mpg, aes(x = !!input$x, y = !!input$y)) +
-            geom_point(aes(color = !!input$colorb))
+            geom_point(aes(color = !!input$color)) +
+            theme_bw()
     })
    
 }
