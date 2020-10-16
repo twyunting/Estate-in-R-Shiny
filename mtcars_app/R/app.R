@@ -1,20 +1,17 @@
 # Yunting Chiu
 
 library(shiny)
-library(tidyverse)
 
-# extract mpg with chr types
-mpg %>% select_if(is.character)  -> mpgChr
+# named the type of plot first
+plotTypes <- c("Density Plot", "Histogram", "Frequency Polygon")
 
 # Inputting to three different variables
 ui <- fluidPage(
-     
+    
     varSelectInput("x", label = "X variable",
-                   data = mpg, selected = "cty"),
-    varSelectInput("y", label = "Y variable",
-                   data = mpg, selected = "hwy"),
-    varSelectInput("color", label = "Color variable (categorical)",
-                   data = mpgChr, selected = "class"),
+                   data = mtcars, selected = "mpg"),
+    radioButtons(inputId = "plotType", label = "Choose a plot type",
+                 choices = plotTypes),
     plotOutput("plot")
 )
 
@@ -25,8 +22,7 @@ server <- function(input, output) {
             geom_point(aes(color = !!input$color)) +
             theme_bw()
     })
-   
+    
 }
-
 # Run the application 
 shinyApp(ui = ui, server = server)
