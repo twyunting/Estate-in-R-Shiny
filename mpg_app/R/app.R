@@ -6,6 +6,7 @@ library(tidyverse)
 # Define UI for application that draws a histogram
 mpg %>% select_if(is.character)  -> mpgChr
 
+# Inputting to three different variables
 ui <- fluidPage(
      
     varSelectInput("x", label = "X variable",
@@ -17,7 +18,7 @@ ui <- fluidPage(
     plotOutput("plot")
 )
 
-# Define server logic required to draw a histogram
+# Define server logic required to draw a scatterrplot
 server <- function(input, output) {
     output$plot <- renderPlot({
         ggplot(mpg, aes(x = !!input$x, y = !!input$y)) +
