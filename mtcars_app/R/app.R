@@ -8,19 +8,29 @@ plotTypes <- c("Density Plot", "Histogram", "Frequency Polygon")
 # Inputting to three different variables
 ui <- fluidPage(
     
-    varSelectInput("x", label = "X variable",
+    varSelectInput("xVar", label = "X variable",
                    data = mtcars, selected = "mpg"),
     radioButtons(inputId = "plotType", label = "Choose a plot type",
                  choices = plotTypes),
     plotOutput("plot")
 )
 
-# Define server logic required to draw a scatterrplot
+# Output
 server <- function(input, output) {
     output$plot <- renderPlot({
-        ggplot(mpg, aes(x = !!input$x, y = !!input$y)) +
-            geom_point(aes(color = !!input$color)) +
-            theme_bw()
+        plotType <- switch(
+            input$plotType,
+            "Density Plot" = ggplot(mtcars, aes(x = !!input$xVar)) +
+            geom_density(outline.type = "full") +
+            theme_bw(),
+            "Histogram" = ggplot(mtcars, aes(x = !!input$xVar)) +
+                geom_histogram() +
+                theme_bw(),
+            "Frequency Polygon" = ggplot(mtcars, aes(x = !!input$xVar)) +
+                geom_freqpoly() +
+                theme_bw()
+        )
+        plot(plotType)
     })
     
 }
