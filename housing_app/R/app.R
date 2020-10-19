@@ -2,7 +2,7 @@
 
 library(shiny)
 library(tidyverse)
-estate <- read_csv("./data/estate.csv")
+estate <- read_csv("../data/estate.csv")
 
 ui <- fluidPage(
 
@@ -16,21 +16,17 @@ ui <- fluidPage(
         sidebarPanel(
             
             # Input: Select the random distribution type ----
-            radioButtons("dist", "Distribution type:",
-                         c("Normal" = "norm",
-                           "Uniform" = "unif",
-                           "Log-normal" = "lnorm",
-                           "Exponential" = "exp")),
+            varSelectInput("Variable", "Variable?", data = estate),
             
             # br() element to introduce extra vertical spacing ----
             br(),
             
             # Input: Slider for the number of observations to generate ----
             sliderInput("n",
-                        "Number of observations:",
+                        "Number of Bins:",
                         value = 500,
                         min = 1,
-                        max = 1000)
+                        max = 100)
             
         ),
         
