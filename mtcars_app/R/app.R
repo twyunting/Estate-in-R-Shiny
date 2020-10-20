@@ -1,7 +1,7 @@
 # Yunting Chiu
 
 library(shiny)
-
+library(tidyverse)
 # named the type of plot first
 plotTypes <- c("Density Plot", "Histogram", "Frequency Polygon")
 
