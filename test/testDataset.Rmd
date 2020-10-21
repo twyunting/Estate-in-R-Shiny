@@ -18,3 +18,9 @@ mpg %>%
 mtcars
 ```
 
+```{r}
+estate <- read_csv("../housing_app/data/estate.csv")
+estate
+readr::write_rds(estate, file = "../housing_app/data/estate.rds", compress = "gz")
+```
+

@@ -1,34 +1,26 @@
 # Yunting Chiu
 
 library(shiny)
-library(tidyverse)
-estate <- read_csv("../data/estate.csv")
+library(ggplot2)
+estate <- readr::read_csv("../data/estate.csv")
 
 ui <- fluidPage(
-
-    # Application title
+    
     titlePanel("EDA of Estate Data"),
-
-    # Sidebar layout with input and output definitions ----
     sidebarLayout(
         
         # Sidebar panel for inputs ----
         sidebarPanel(
-            
-            # Input: Select the random distribution type ----
-            varSelectInput("Variable", "Variable?", data = estate),
-            
-            # br() element to introduce extra vertical spacing ----
-            br(),
-            
-            # Input: Slider for the number of observations to generate ----
+            varSelectInput("var", "Variable?", data = estate),
+            checkboxGroupInput("log", label = NULL, choices = "Log_Transform?"),
             sliderInput("n",
-                        "Number of Bins:",
-                        value = 500,
+                        "Number of Bins?",
+                        value = 40,
                         min = 1,
-                        max = 100)
+                        max = 100),
+            textInput("null", "Null Value", value = 0)
             
-        ),
+        ),#sidebarPanel
         
         # Main panel for displaying outputs ----
         mainPanel(
@@ -38,11 +30,11 @@ ui <- fluidPage(
                         tabPanel("Plot", plotOutput("plot")),
                         tabPanel("Summary", verbatimTextOutput("summary")),
                         tabPanel("Table", tableOutput("table"))
-            )
+            )# tabsetPanel
             
-        )
-    )
-)
+        )# mainPanel
+    )# sidebarLayout
+)# fluidPage
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
