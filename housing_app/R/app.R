@@ -2,7 +2,8 @@
 
 library(shiny)
 library(ggplot2)
-estate <- readr::read_csv("../data/estate.csv")
+library(readr)
+estate <- read_csv("../data/estate.csv")
 
 ui <- fluidPage(
     
@@ -12,7 +13,7 @@ ui <- fluidPage(
         # Sidebar panel for inputs ----
         sidebarPanel(
             varSelectInput("var", "Variable?", data = estate),
-            checkboxGroupInput("log", label = NULL, choices = "Log_Transform?"),
+            checkboxInput("log", "Log_Transform?"),
             sliderInput("n",
                         "Number of Bins?",
                         value = 40,

@@ -1,7 +1,7 @@
 # Yunting Chiu
 
 library(shiny)
-library(ggplot2)
+library(tidyverse)
 
 # extract mpg with chr types
 mpg %>% select_if(is.character)  -> mpgChr

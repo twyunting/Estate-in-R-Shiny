@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+library(tidyverse)
 mpg %>%
   select_if(is.character) 
 ```
@@ -17,10 +18,16 @@ mpg %>%
 ```{r}
 mtcars
 ```
-
+- Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
 ```{r}
-estate <- read_csv("../housing_app/data/estate.csv")
+# Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
+estate <- read_csv("../housing_app/data/estate.csv",
+                   col_types = cols("AC" = col_factor(),
+                                    "Pool" = col_factor(),
+                                    "Highway" = col_factor())) %>%
+          mutate(Price = round(Price/1000)) %>%
+          rename("Price($K)" = "Price")
 estate
-readr::write_rds(estate, file = "../housing_app/data/estate.rds", compress = "gz")
 ```
+
 
