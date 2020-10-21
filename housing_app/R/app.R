@@ -12,43 +12,30 @@ estate <- read_csv("../data/estate.csv",
     rename("Price($K)" = "Price") -> estate
 
 ui <- fluidPage(
-    
-    titlePanel("EDA of Estate Data"),
-    tabsetPanel(
-        tabPanel("Histogram", plotOutput("hist")
-        ),
-        tabPanel("Density", plotOutput("density")
-        ),
-        tabPanel("Boxplot", plotOutput("box")
+    titlePanel("EDA of Estate Data", windowTitle = "EDA of Estate Data"),
+    tabsetPanel(type = "tabs",
+        tabPanel("Univariate",
+                 sidebarLayout(
+                     sidebarPanel(
+                         varSelectInput("var", "Variable?", 
+                                        data = estate, selected = "Price($K)"),
+                         checkboxInput("log", "Log_Transform?"),
+                         sliderInput("bins",
+                                     "Number of Bins?",
+                                     value = 40,
+                                     min = 1,
+                                     max = 100),
+                         numericInput("null", "Null Value", value = 0)
+                     ),
+                     mainPanel(plotOutput("plot1")
+                )#sidebarPanel
+            )# sidebarLayout
         )
-    ), # tabsetPanel
-    sidebarLayout(
-        
-        # Sidebar panel for inputs ----
-        sidebarPanel(
-            
-            varSelectInput("var", "Variable?", data = estate, selected = "Price($K)"),
-            checkboxInput("log", "Log_Transform?"),
-            sliderInput("n",
-                        "Number of Bins?",
-                        value = 40,
-                        min = 1,
-                        max = 100),
-            textInput("null", "Null Value", value = 0)
-            
-        ),#sidebarPanel
-        
-        # Main panel for displaying outputs ----
-        mainPanel(
-            
-            # Output: Tabset w/ plot, summary, and table ----
-           
-            
-        )# mainPanel
-    )# sidebarLayout
+    )
 )# fluidPage
 
-# Define server logic required to draw a histogram
+
+# Output
 server <- function(input, output) {
 
 
