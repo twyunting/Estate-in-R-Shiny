@@ -26,7 +26,7 @@ estate <- read_csv("../housing_app/data/estate.csv",
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor())) %>%
           mutate(Price = round(Price/1000)) %>%
-          rename("Price($K)" = "Price")
+          rename("Price($K)" = "Price") -> estate
 estate
 ```
 

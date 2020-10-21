@@ -1,18 +1,33 @@
 # Yunting Chiu
 
 library(shiny)
-library(ggplot2)
-library(readr)
-estate <- read_csv("../data/estate.csv")
+library(tidyverse)
+
+# Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
+estate <- read_csv("../data/estate.csv",
+                   col_types = cols("AC" = col_factor(),
+                                    "Pool" = col_factor(),
+                                    "Highway" = col_factor())) %>%
+    mutate(Price = round(Price/1000)) %>%
+    rename("Price($K)" = "Price") -> estate
 
 ui <- fluidPage(
     
     titlePanel("EDA of Estate Data"),
+    tabsetPanel(
+        tabPanel("Histogram", plotOutput("hist")
+        ),
+        tabPanel("Density", plotOutput("density")
+        ),
+        tabPanel("Boxplot", plotOutput("box")
+        )
+    ), # tabsetPanel
     sidebarLayout(
         
         # Sidebar panel for inputs ----
         sidebarPanel(
-            varSelectInput("var", "Variable?", data = estate),
+            
+            varSelectInput("var", "Variable?", data = estate, selected = "Price($K)"),
             checkboxInput("log", "Log_Transform?"),
             sliderInput("n",
                         "Number of Bins?",
@@ -27,11 +42,7 @@ ui <- fluidPage(
         mainPanel(
             
             # Output: Tabset w/ plot, summary, and table ----
-            tabsetPanel(type = "tabs",
-                        tabPanel("Plot", plotOutput("plot")),
-                        tabPanel("Summary", verbatimTextOutput("summary")),
-                        tabPanel("Table", tableOutput("table"))
-            )# tabsetPanel
+           
             
         )# mainPanel
     )# sidebarLayout
