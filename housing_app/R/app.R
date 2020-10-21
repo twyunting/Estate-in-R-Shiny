@@ -17,9 +17,9 @@ ui <- fluidPage(
         tabPanel("Univariate",
                  sidebarLayout(
                      sidebarPanel(
-                         varSelectInput("var", "Variable?", 
+                         varSelectInput("var1", "Variable?", 
                                         data = estate, selected = "Price($K)"),
-                         checkboxInput("log", "Log_Transform?"),
+                         checkboxInput("log1", "Log_Transform?"),
                          sliderInput("bins",
                                      "Number of Bins?",
                                      value = 40,
@@ -27,11 +27,26 @@ ui <- fluidPage(
                                      max = 100),
                          numericInput("null", "Null Value", value = 0)
                      ),
-                     mainPanel(plotOutput("plot1")
+                mainPanel(plotOutput("plot1")
                 )#sidebarPanel
             )# sidebarLayout
-        )
-    )
+        ),# tabPanel
+        tabPanel("Bivariate",
+                 sidebarLayout(
+                     sidebarPanel(
+                         varSelectInput("var2X", "X Variable?",
+                                              data = estate, selected = "Price($K)"),
+                               checkboxInput("log2X", "Log_Transform?"),
+                               varSelectInput("var2Y", "Y Variable?",
+                                              data = estate, selected = "Price($K)"),
+                               checkboxInput("log2Y", "Log_Transform?"),
+                               checkboxInput("OLS", "fit OLS?")
+                     ),
+                mainPanel(plotOutput("plot2")
+                )#sidebarPanel
+            )#sidebarLayout
+        )# tabPanel
+    )# tabsetPanel
 )# fluidPage
 
 
