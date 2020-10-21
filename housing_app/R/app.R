@@ -45,6 +45,9 @@ ui <- fluidPage(
                 mainPanel(plotOutput("plot2")
                 )#sidebarPanel
             )#sidebarLayout
+        ), # tabPanel
+       tabPanel("SpreadSheet",
+                dataTableOutput("sheets")
         )# tabPanel
     )# tabsetPanel
 )# fluidPage
