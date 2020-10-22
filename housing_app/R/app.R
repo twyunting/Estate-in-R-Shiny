@@ -9,7 +9,7 @@ estate <- read_csv("../data/estate.csv",
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor())) %>%
     mutate(Price = round(Price/1000)) %>%
-    rename("Price($K)" = "Price") -> estate
+    rename("Price" = "Price") -> estate
 
 ui <- fluidPage(
     titlePanel("EDA of Estate Data", windowTitle = "EDA of Estate Data"),
@@ -18,7 +18,7 @@ ui <- fluidPage(
                  sidebarLayout(
                      sidebarPanel(
                          varSelectInput("var1", "Variable?", 
-                                        data = estate, selected = "Price($K)"),
+                                        data = estate, selected = "Price"),
                          checkboxInput("log1", "Log_Transform?"),
                          sliderInput("bins",
                                      "Number of Bins?",
@@ -36,10 +36,10 @@ ui <- fluidPage(
                  sidebarLayout(
                      sidebarPanel(
                          varSelectInput("var2X", "X Variable?",
-                                              data = estate, selected = "Price($K)"),
+                                              data = estate, selected = "Price"),
                                checkboxInput("log2X", "Log_Transform?"),
                                varSelectInput("var2Y", "Y Variable?",
-                                              data = estate, selected = "Price($K)"),
+                                              data = estate, selected = "Price"),
                                checkboxInput("log2Y", "Log_Transform?"),
                                checkboxInput("OLS", "fit OLS?")
                      ),
@@ -56,6 +56,11 @@ ui <- fluidPage(
 
 # Output
 server <- function(input, output) {
+    output$plot1 <- renderPlot({
+        ggplot(data = estate, aes(x = Price)) +
+            geom_histogram()
+        
+    })# renderplot
 
 
 }
