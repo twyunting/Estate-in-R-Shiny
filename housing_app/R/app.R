@@ -8,7 +8,7 @@ estate <- read_csv("../data/estate.csv",
                    col_types = cols("AC" = col_factor(),
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor())) %>%
-    mutate(Price = round(Price/1000)) %>%
+    mutate(Price = Price/1000) %>%
     rename("Price" = "Price") -> estate
 
 ui <- fluidPage(
@@ -25,8 +25,8 @@ ui <- fluidPage(
                                      value = 40,
                                      min = 1,
                                      max = 100),
-                         numericInput("null", "Null Value", value = 0)
-                         
+                         numericInput("null", "Null Value", value = 0),
+                         tableOutput("pvalue")
                      ),
                 mainPanel(plotOutput("plot1")
                 )#sidebarPanel
@@ -59,9 +59,13 @@ server <- function(input, output) {
     output$plot1 <- renderPlot({
         ggplot(data = estate, aes(x = Price)) +
             geom_histogram()
-        
     })# renderplot
-
+    output$pvalue <- renderTable({
+        t.test(estate$Price, alternative = "two.sided", mu = 0, conf.level = 0.95) %>% 
+            tidy() %>%
+            select("P-value" = p.value, "Estimate" = estimate,
+                   "95 % Lower" = conf.low, "95 % Upper" = conf.high)
+    })
 
 }
 
