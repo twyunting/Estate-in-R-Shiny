@@ -26,6 +26,7 @@ ui <- fluidPage(
                                      min = 1,
                                      max = 100),
                          numericInput("null", "Null Value", value = 0)
+                         
                      ),
                 mainPanel(plotOutput("plot1")
                 )#sidebarPanel
