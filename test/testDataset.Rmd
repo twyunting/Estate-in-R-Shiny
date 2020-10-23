@@ -26,7 +26,10 @@ estate <- read_csv("../housing_app/data/estate.csv",
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor())) %>%
           mutate(Price = round(Price/1000)) %>%
-          rename("Price($K)" = "Price") -> estate
+          rename("Price($K)" = "Price") %>%
+          mutate(AC = fct_recode(AC, "Presence" = "1", "Absence" = "0"),
+                 Pool = fct_recode(Pool, "Pool" = "1", "No Pool" = "0"),
+                 Highway = fct_recode(Highway, "Adjacent" = "1", "Not Adjacent" = "0")) -> estate
 estate
 ```
 
@@ -35,7 +38,7 @@ ls(estate)
 ```
 
 ```{r}
-typeof(estate)
+estate %>%
 ```
 ```{r}
 mtcars %>% select_if(is_whole, toupper)
