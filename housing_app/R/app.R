@@ -63,9 +63,7 @@ server <- function(input, output) {
     
     output$plot1 <- renderPlot({
         pl1 <- ggplot(estate, aes(x = !!input$var1))
-        if(is.factor(estate[[input$var1]])){ # 3 variable is factor.
-          pl1 <- pl1 + geom_bar()  
-        }else if(is.numeric(estate[[input$var1]])){
+        if(is.numeric(estate[[input$var1]])){
             if(input$log1){
                 pl1 <- pl1 + geom_histogram(bins = input$bins) +
                     scale_x_log10() +
@@ -80,25 +78,25 @@ server <- function(input, output) {
     })# renderplot
         
     output$table <- renderTable({
-        if(is.numeric(estate[[input$var1]])) {
+        if(is.numeric(estate[[input$var1]])){
            if(!!input$log1){
                estate %>%
-                   select(!!input$var1) %>%
+                   select(input$var1) %>%
                    log() %>%
                    t.test(alternative = "two.sided", 
                           mu = input$mu , conf.level = 0.95) %>% 
                    broom::tidy() %>%
                    select("P-value" = p.value, "Estimate" = estimate,
                           "95 % Lower" = conf.low, "95 % Upper" = conf.high)
-        }else{
-            estate %>%
-                select(!!input$var1) %>%
-                t.test(alternative = "two.sided", 
+            }else{
+                estate %>%
+                    select(input$var1) %>%
+                    t.test(alternative = "two.sided", 
                        mu = input$mu , conf.level = 0.95) %>% 
-                broom::tidy() %>%
-                select("P-value" = p.value, "Estimate" = estimate,
+                    broom::tidy() %>%
+                    select("P-value" = p.value, "Estimate" = estimate,
                        "95 % Lower" = conf.low, "95 % Upper" = conf.high)
-        }
+            }
         }else{
             print("Variable is not numeric")
         }
