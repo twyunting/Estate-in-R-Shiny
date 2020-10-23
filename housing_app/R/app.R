@@ -30,7 +30,7 @@ ui <- fluidPage(
                                      min = 1,
                                      max = 100),
                          numericInput("mu", "Null Value", value = 0),
-                         tableOutput("table")
+                         tableOutput("table1")
                      ),
                 mainPanel(plotOutput("plot1")
                 )#sidebarPanel
@@ -41,11 +41,11 @@ ui <- fluidPage(
                      sidebarPanel(
                          varSelectInput("var2X", "X Variable?",
                                               data = estate, selected = "Price($K)"),
-                               checkboxInput("log2X", "Log_Transform?"),
-                               varSelectInput("var2Y", "Y Variable?",
+                         checkboxInput("log2X", "Log_Transform?"),
+                         varSelectInput("var2Y", "Y Variable?",
                                               data = estate, selected = "Price($K)"),
-                               checkboxInput("log2Y", "Log_Transform?"),
-                               checkboxInput("OLS", "Fit OLS?")
+                         checkboxInput("log2Y", "Log_Transform?"),
+                         checkboxInput("OLS", "Fit OLS?")
                      ),
                 mainPanel(plotOutput("plot2")
                 )#sidebarPanel
@@ -77,7 +77,7 @@ server <- function(input, output) {
         pl1
     })# renderplot
         
-    output$table <- renderTable({
+    output$table1 <- renderTable({
         if(is.numeric(estate[[input$var1]])){
            if(!!input$log1){
                estate %>%
@@ -100,8 +100,15 @@ server <- function(input, output) {
         }else{
             print("Variable is not numeric")
         }
-    })# renderTable
+    })# renderTable (End of the first tab)
 
+    output$plot2 <- renderPlot({
+        
+        pl2 <- ggplot(estate, aes(x = !!input$var2X, y = !!input$var2Y))
+    })
+    
+    
+    
 }# server 
 
 # Run the application 
