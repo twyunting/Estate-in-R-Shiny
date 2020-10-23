@@ -35,8 +35,7 @@ ls(estate)
 ```
 
 ```{r}
-estate %>%
-  dplyr::select_if(is.numeric)
+typeof(estate)
 ```
 ```{r}
 mtcars %>% select_if(is_whole, toupper)

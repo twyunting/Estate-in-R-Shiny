@@ -9,7 +9,10 @@ estate <- read_csv("../data/estate.csv",
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor())) %>%
     mutate(Price = Price/1000) %>%
-    rename("Price($K)" = "Price") -> estate
+    rename("Price($K)" = "Price")  %>%
+    mutate(AC = fct_recode(AC, "Presence" = "1", "Absence" = "0"),
+           Pool = fct_recode(Pool, "Pool" = "1", "No Pool" = "0"),
+           Highway = fct_recode(Highway, "Adjacent" = "1", "Not Adjacent" = "0")) -> estate
 
 
 ui <- fluidPage(
@@ -73,7 +76,7 @@ server <- function(input, output) {
         pl1
     })# renderplot
     output$table <- renderTable({
-        if(is.numeric(estate[[input$var1]]) && !(is.integer(estate[[input$var1]]))) {
+        if(is.numeric(estate[[input$var1]])) {
            if(!!input$log1){
                estate %>%
                    select(!!input$var1) %>%
@@ -83,7 +86,15 @@ server <- function(input, output) {
                    broom::tidy() %>%
                    select("P-value" = p.value, "Estimate" = estimate,
                           "95 % Lower" = conf.low, "95 % Upper" = conf.high)
-           } 
+        }else if{
+            estate %>%
+                select(!!input$var1) %>%
+                t.test(alternative = "two.sided", 
+                       mu = input$mu , conf.level = 0.95) %>% 
+                broom::tidy() %>%
+                select("P-value" = p.value, "Estimate" = estimate,
+                       "95 % Lower" = conf.low, "95 % Upper" = conf.high)
+        }
         }else{
             print("Variable is not numeric")
         }
