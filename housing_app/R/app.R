@@ -26,8 +26,8 @@ ui <- fluidPage(
                                      value = 40,
                                      min = 1,
                                      max = 100),
-                         numericInput("null", "Null Value", value = 0),
-                         tableOutput("ttest")
+                         numericInput("mu", "Null Value", value = 0),
+                         tableOutput("table")
                      ),
                 mainPanel(plotOutput("plot1")
                 )#sidebarPanel
@@ -58,34 +58,35 @@ ui <- fluidPage(
 # Output
 server <- function(input, output) {
     
-    #qq <- reactive({
-        #if(input$var1){
-            #if(is.numeric(estate[[input$var1]])){
-               # print(input$var1)
-           # }
-       # } 
-   # })
-    
     output$plot1 <- renderPlot({
-        pl <- ggplot(estate, aes(x = !!input$var1))
+        pl1 <- ggplot(estate, aes(x = !!input$var1))
         if(is.factor(estate[[input$var1]])){
-          pl <- pl + geom_bar()  
+          pl1 <- pl1 + geom_bar()  
         }else{
             if(input$log1){
-                pl <- pl + geom_histogram(bins = input$bins) +
+                pl1 <- pl1 + geom_histogram(bins = input$bins) +
                     scale_x_log10()
             }else{
-                pl <- pl +geom_histogram(bins = input$bins)
+                pl1 <- pl1 + geom_histogram(bins = input$bins)
             }
         }
-        pl
+        pl1
     })# renderplot
-    output$ttest <- renderTable({
-        t.test(estate[[input$var1]], alternative = "two.sided", 
-               mu = input$null , conf.level = 0.95) %>% 
-            broom::tidy() %>%
-            select("P-value" = p.value, "Estimate" = estimate,
-                   "95 % Lower" = conf.low, "95 % Upper" = conf.high)
+    output$table <- renderTable({
+        if(is.numeric(estate[[input$var1]]) && !(is.integer(estate[[input$var1]]))) {
+           if(!!input$log1){
+               estate %>%
+                   select(!!input$var1) %>%
+                   log() %>%
+                   t.test(alternative = "two.sided", 
+                          mu = input$mu , conf.level = 0.95) %>% 
+                   broom::tidy() %>%
+                   select("P-value" = p.value, "Estimate" = estimate,
+                          "95 % Lower" = conf.low, "95 % Upper" = conf.high)
+           } 
+        }else{
+            print("Variable is not numeric")
+        }
     })# renderTable
 
 }# server 
