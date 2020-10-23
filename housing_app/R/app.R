@@ -74,7 +74,7 @@ server <- function(input, output) {
                 pl1 <- pl1 + geom_histogram(bins = input$bins)
             }
         }else{
-            pl1 <- pl1 + geom_boxplot()
+            pl1 <- pl1 + geom_bar()
         }
         pl1
     })# renderplot
