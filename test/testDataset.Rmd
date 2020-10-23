@@ -30,4 +30,15 @@ estate <- read_csv("../housing_app/data/estate.csv",
 estate
 ```
 
+```{r}
+ls(estate)
+```
+
+```{r}
+estate %>%
+  dplyr::select_if(is.numeric)
+```
+```{r}
+mtcars %>% select_if(is_whole, toupper)
+```
 

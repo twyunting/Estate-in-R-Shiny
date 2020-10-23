@@ -9,7 +9,8 @@ estate <- read_csv("../data/estate.csv",
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor())) %>%
     mutate(Price = Price/1000) %>%
-    rename("Price" = "Price") -> estate
+    rename("Price($K)" = "Price") -> estate
+
 
 ui <- fluidPage(
     titlePanel("EDA of Estate Data", windowTitle = "EDA of Estate Data"),
@@ -18,7 +19,7 @@ ui <- fluidPage(
                  sidebarLayout(
                      sidebarPanel(
                          varSelectInput("var1", "Variable?", 
-                                        data = estate, selected = "Price"),
+                                        data = estate, selected = "Price($K)"),
                          checkboxInput("log1", "Log_Transform?"),
                          sliderInput("bins",
                                      "Number of Bins?",
@@ -26,7 +27,7 @@ ui <- fluidPage(
                                      min = 1,
                                      max = 100),
                          numericInput("null", "Null Value", value = 0),
-                         tableOutput("pvalue")
+                         tableOutput("ttest")
                      ),
                 mainPanel(plotOutput("plot1")
                 )#sidebarPanel
@@ -36,12 +37,12 @@ ui <- fluidPage(
                  sidebarLayout(
                      sidebarPanel(
                          varSelectInput("var2X", "X Variable?",
-                                              data = estate, selected = "Price"),
+                                              data = estate, selected = "Price($K)"),
                                checkboxInput("log2X", "Log_Transform?"),
                                varSelectInput("var2Y", "Y Variable?",
-                                              data = estate, selected = "Price"),
+                                              data = estate, selected = "Price($K)"),
                                checkboxInput("log2Y", "Log_Transform?"),
-                               checkboxInput("OLS", "fit OLS?")
+                               checkboxInput("OLS", "Fit OLS?")
                      ),
                 mainPanel(plotOutput("plot2")
                 )#sidebarPanel
@@ -56,18 +57,38 @@ ui <- fluidPage(
 
 # Output
 server <- function(input, output) {
+    
+    #qq <- reactive({
+        #if(input$var1){
+            #if(is.numeric(estate[[input$var1]])){
+               # print(input$var1)
+           # }
+       # } 
+   # })
+    
     output$plot1 <- renderPlot({
-        ggplot(data = estate, aes(x = Price)) +
-            geom_histogram()
+        pl <- ggplot(estate, aes(x = !!input$var1))
+        if(is.factor(estate[[input$var1]])){
+          pl <- pl + geom_bar()  
+        }else{
+            if(input$log1){
+                pl <- pl + geom_histogram(bins = input$bins) +
+                    scale_x_log10()
+            }else{
+                pl <- pl +geom_histogram(bins = input$bins)
+            }
+        }
+        pl
     })# renderplot
-    output$pvalue <- renderTable({
-        t.test(estate$Price, alternative = "two.sided", mu = 0, conf.level = 0.95) %>% 
-            tidy() %>%
+    output$ttest <- renderTable({
+        t.test(estate[[input$var1]], alternative = "two.sided", 
+               mu = input$null , conf.level = 0.95) %>% 
+            broom::tidy() %>%
             select("P-value" = p.value, "Estimate" = estimate,
                    "95 % Lower" = conf.low, "95 % Upper" = conf.high)
-    })
+    })# renderTable
 
-}
+}# server 
 
 # Run the application 
 shinyApp(ui = ui, server = server)
