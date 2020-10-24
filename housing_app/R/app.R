@@ -62,15 +62,17 @@ ui <- fluidPage(
 server <- function(input, output) {
     logg1 <- reactive({
         validate(
-            need(input$log1, "Cannot transform the data")
+            need(input$log1 != "", "Cannot transform the data")
             )
-        
+        estate %>%
+            select(input$log1) %>% #test
+            log()
     })
     
     output$plot1 <- renderPlot({
         pl1 <- ggplot(estate, aes(x = !!input$var1))
         if(is.numeric(estate[[input$var1]])){
-            if(logg1()){ #test
+            if(input$log1){ #test
                 pl1 <- pl1 + geom_histogram(bins = input$bins) +
                     scale_x_log10() +
                     labs(x = paste("Log(",input$var1,")"))
@@ -85,19 +87,19 @@ server <- function(input, output) {
         
     output$table1 <- renderTable({
         if(is.numeric(estate[[input$var1]])){
-           if(logg1()){ #test
-               estate %>%
-                   select(logg1()) %>% #test
-                   log() %>%
-                   t.test(alternative = "two.sided", 
+           if(input$log1){ #test
+               #estate %>%
+                   #select(logg1()) %>% #test
+                   #log() %>%
+                   t.test(logg1(), alternative = "two.sided", 
                           mu = input$mu , conf.level = 0.95) %>% 
                    broom::tidy() %>%
                    select("P-value" = p.value, "Estimate" = estimate,
                           "95 % Lower" = conf.low, "95 % Upper" = conf.high)
             }else{
-                estate %>%
-                    select(logg1()) %>% #test
-                    t.test(alternative = "two.sided", 
+                #estate %>%
+                    #select(logg1()) %>% #test
+                    t.test(logg1(), alternative = "two.sided", 
                        mu = input$mu , conf.level = 0.95) %>% 
                     broom::tidy() %>%
                     select("P-value" = p.value, "Estimate" = estimate,
