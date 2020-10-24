@@ -170,6 +170,9 @@ server <- function(input, output) {
         pl2
     })# renderPlot
     
+    output$table <- renderDataTable({
+        estate
+    })
     
     
 }# server 
