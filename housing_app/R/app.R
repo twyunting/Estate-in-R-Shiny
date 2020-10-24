@@ -79,7 +79,7 @@ server <- function(input, output) {
         
     output$table1 <- renderTable({
         if(is.numeric(estate[[input$var1]])){
-           if(!!input$log1){
+           if(input$log1){
                estate %>%
                    select(input$var1) %>%
                    log() %>%
@@ -103,9 +103,34 @@ server <- function(input, output) {
     })# renderTable (End of the first tab)
 
     output$plot2 <- renderPlot({
-        
         pl2 <- ggplot(estate, aes(x = !!input$var2X, y = !!input$var2Y))
-    })
+        if(is.numeric(estate[[input$var2X]]) && is.numeric(estate[[input$var2Y]])){
+            if(input$OLS){
+                if(input$log2X && input$log2Y){
+                    pl2 <- pl2 + 
+                        geom_point() +
+                        scale_x_log10() +
+                        scale_y_log10() +
+                        geom_smooth(method = lm, se = FALSE)
+                }else if(input$log2X){
+                    pl2 <- pl2 + 
+                        geom_point() +
+                        scale_x_log10() +
+                        geom_smooth(method = lm, se = FALSE)
+                }else if(input$log2Y){
+                    pl2 <- pl2 + 
+                        geom_point() +
+                        scale_y_log10() +
+                        geom_smooth(method = lm, se = FALSE)
+                }else{
+                    pl2 <- pl2 + 
+                        geom_point() +
+                        geom_smooth(method = lm, se = FALSE)
+                }
+                }
+            }# OLS
+        }# is.numeric
+    })# renderPlot
     
     
     
