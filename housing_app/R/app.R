@@ -104,7 +104,7 @@ server <- function(input, output) {
 
     output$plot2 <- renderPlot({
         pl2 <- ggplot(estate, aes(x = !!input$var2X, y = !!input$var2Y))
-        if(is.numeric(estate[[input$var2X]]) && is.numeric(estate[[input$var2Y]])){
+        if(is.numeric(estate[[input$var2X]]) & is.numeric(estate[[input$var2Y]])){
             if(input$OLS){
                 if(input$log2X && input$log2Y){
                     pl2 <- pl2 + 
@@ -155,7 +155,7 @@ server <- function(input, output) {
                     geom_boxplot()
             }
             
-        }else if(is.numeric(estate[[input$var3]])){
+        }else if(is.numeric(estate[[input$var2Y]])){
             if(input$log2Y){
                 pl2 <- pl2 +
                     geom_boxplot() +
@@ -164,7 +164,7 @@ server <- function(input, output) {
                 pl2 <- pl2 + 
                     geom_boxplot()
             }
-        }else{
+        }else if(!is.numeric(estate[[input$var2X]] & !is.numeric(estate[[input$var2Y]]))){
             pl2 <- pl2 + geom_jitter()
         }
         pl2
