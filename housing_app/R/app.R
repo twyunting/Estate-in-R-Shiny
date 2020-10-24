@@ -10,9 +10,9 @@ estate <- read_csv("../data/estate.csv",
                                     "Highway" = col_factor())) %>%
     mutate(Price = Price/1000) %>%
     rename("Price($K)" = "Price")  %>%
-    mutate(AC = fct_recode(AC, "Presence" = "1", "Absence" = "0"),
+    mutate(AC = fct_recode(AC, "AC" = "1", "No AC" = "0"),
            Pool = fct_recode(Pool, "Pool" = "1", "No Pool" = "0"),
-           Highway = fct_recode(Highway, "Adjacent" = "1", "Not Adjacent" = "0")) -> estate
+           Highway = fct_recode(Highway, "Adjacent" = "1", "No Adjacent" = "0")) -> estate
 
 
 ui <- fluidPage(
@@ -170,7 +170,7 @@ server <- function(input, output) {
         pl2
     })# renderPlot
     
-    output$table <- renderDataTable({
+    output$sheets <- renderDataTable({
         estate
     })
     
