@@ -60,14 +60,10 @@ ui <- fluidPage(
 
 # Output
 server <- function(input, output) {
-    #logg1 <- reactive({
-        #validate(
-            #need(input$log1 != "", "Cannot transform the data")
-          #  )
-        #estate %>%
-           # select(input$log1) %>% #test
-           # log()
- #   })
+    fa <- reactive({
+        validate(is.factor(estate[[input$var1]]), "can not use log"
+        )
+    })
     
     output$plot1 <- renderPlot({
         pl1 <- ggplot(estate, aes(x = !!input$var1))
@@ -87,7 +83,7 @@ server <- function(input, output) {
         
     output$table1 <- renderTable({
         if(is.numeric(estate[[input$var1]])){
-           if(input$log1){ #test
+           if(input$log1 & !(fa())){ #test
                estate %>%
                    select(input$var1) %>% #test
                    log() %>%
