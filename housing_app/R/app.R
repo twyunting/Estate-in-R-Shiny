@@ -127,9 +127,47 @@ server <- function(input, output) {
                         geom_point() +
                         geom_smooth(method = lm, se = FALSE)
                 }
+            }else{
+                if(input$log2X && input$log2Y){
+                    pl2 <- pl2 + 
+                        geom_point() +
+                        scale_x_log10() +
+                        scale_y_log10() 
+                }else if(input$log2X){
+                    pl2 <- pl2 + 
+                        geom_point() +
+                        scale_x_log10()
+                }else if(input$log2Y){
+                    pl2 <- pl2 + 
+                        geom_point() +
+                        scale_y_log10()
+                }else{
+                    pl2 <- pl2 + geom_point()
                 }
             }# OLS
-        }# is.numeric
+        }else if(is.numeric(estate[[input$var2X]])){
+            if(input$log2X){
+                pl2 <- pl2 + 
+                    geom_boxplot() +
+                    scale_x_log10()
+            }else{
+                pl2 <- pl2 + 
+                    geom_boxplot()
+            }
+            
+        }else if(is.numeric(estate[[input$var3]])){
+            if(input$log2Y){
+                pl2 <- pl2 +
+                    geom_boxplot() +
+                    scale_y_log10()
+            }else{
+                pl2 <- pl2 + 
+                    geom_boxplot()
+            }
+        }else{
+            pl2 <- pl2 + geom_jitter()
+        }
+        pl2
     })# renderPlot
     
     
