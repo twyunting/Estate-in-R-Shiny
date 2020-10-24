@@ -164,7 +164,7 @@ server <- function(input, output) {
                 pl2 <- pl2 + 
                     geom_boxplot()
             }
-        }else if(!is.numeric(estate[[input$var2X]] & !is.numeric(estate[[input$var2Y]]))){
+        }else{
             pl2 <- pl2 + geom_jitter()
         }
         pl2
