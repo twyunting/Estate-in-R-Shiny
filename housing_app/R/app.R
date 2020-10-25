@@ -66,8 +66,9 @@ ui <- fluidPage(
              column(4,
                     plotOutput("residual")
              ),
+             column(4),
              column(4,
-                    plotOutput("qqplot")
+                    plotOutput("qq")
              )
                  
     ) #fluidRow
@@ -207,22 +208,29 @@ server <- function(input, output) {
     })
     
 # extra credit
-# model <- (log(estate[[input$var2Y]] ~ log(estate[[input$var2X]])
+
     output$lm <- renderPrint({
         if(is.numeric(estate[[input$var2X]]) & 
            is.numeric(estate[[input$var2Y]]) &
            input$log2X & 
            input$log2Y & 
            input$OLS){
-           
-            #estate %>% 
-                #select(input$var2X,input$var2Y) %>%
-                #log() -> RegData
             summary(lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]])))
-            
-        
         }
-    })
+    })#renderPrint
+    
+    output$qq <- renderPlot({
+        if(is.numeric(estate[[input$var2X]]) & 
+           is.numeric(estate[[input$var2Y]]) &
+           input$log2X & 
+           input$log2Y & 
+           input$OLS){
+            estate %>%
+            ggplot() +
+            geom_qq(aes(sample = !!input$var2Y)) +
+            geom_abline(color = "black")
+        }
+    })# renderPlot
     
 }# server 
 
