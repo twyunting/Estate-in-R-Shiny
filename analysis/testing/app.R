@@ -24,6 +24,7 @@ server <- shinyServer(function(input, output) {
         ggplot(tmp, aes(x = .fitted, y = .resid)) +
             geom_point() +
             geom_smooth(method = loess, formula = y ~ x) 
+            
     })
 })
 

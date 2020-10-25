@@ -226,9 +226,12 @@ server <- function(input, output) {
            input$log2Y & 
            input$OLS){
             estate %>%
-            ggplot() +
-            geom_qq(aes(sample = !!input$var2Y)) +
-            geom_abline(color = "black")
+                select(input$var2Y) %>%
+                log() %>%
+                ggplot() +
+                geom_qq(aes(sample = !!input$var2Y)) +
+                geom_abline(color = "black", linetype = "dashed", size = 1) +
+                ggtitle("QQ Plot")
         }
     })# renderPlot
     
