@@ -34,13 +34,13 @@ estate
 ```
 
 ```{r}
-ls(estate)
+ estate %>% 
+  select(Area,Year) %>%
+    log() -> RegData
+summary(lm(Area~Year, data = RegData))
+
 ```
 
-```{r}
-estate %>%
-```
-```{r}
-mtcars %>% select_if(is_whole, toupper)
-```
+
+
 

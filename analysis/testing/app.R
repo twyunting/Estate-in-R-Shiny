@@ -1,23 +1,31 @@
-## Only run examples in interactive R sessions
-if (interactive()) {
-    options(device.ask.default = FALSE)
+library(shiny)
+library(lmtest)
+library(ggplot2)
+library(broom)
+
+ui <- navbarPage(tabPanel("Predictions",
+                          tabsetPanel(
+                              tabPanel("Linear Regression", 
+                                       tags$h1("Predicting G3 using G1 as predictor using Linear Regression"), 
+                                       verbatimTextOutput("ML"),
+                                       plotOutput("Model")
+                              ))
+))
+
+server <- shinyServer(function(input, output) {
+    model <- lm(formula = wt ~ hp, data = mtcars)
     
-    ui <- fluidPage(
-        checkboxGroupInput('in1', 'Check some letters', choices = head(LETTERS)),
-        selectizeInput('in2', 'Select a state', choices = state.name),
-        plotOutput('plot')
-    )
+    output$ML <- renderPrint({
+        summary(model)
+    })
     
-    server <- function(input, output) {
-        output$plot <- renderPlot({
-            validate(
-                need(input$in1, 'Check at least one letter!'),
-                need(input$in2 != '', 'Please choose a state.')
-            )
-            plot(1:10, main = paste(c(input$in1, input$in2), collapse = ', '))
-        })
-    }
-    
-    shinyApp(ui, server)
-    
-}
+    output$Model <- renderPlot({
+        tmp <- augment(model)
+        ggplot(tmp, aes(x = .fitted, y = .resid)) +
+            geom_point() +
+            geom_smooth(method = loess, formula = y ~ x) 
+    })
+})
+
+
+shinyApp(ui = ui, server = server)

@@ -46,6 +46,8 @@ ui <- fluidPage(
                                               data = estate, selected = "Price($K)"),
                          checkboxInput("log2Y", "Log_Transform?"),
                          checkboxInput("OLS", "Fit OLS?")
+                         
+                         
                      ),
                 mainPanel(plotOutput("plot2")
                 )#sidebarPanel
@@ -54,16 +56,31 @@ ui <- fluidPage(
        tabPanel("SpreadSheet",
                 dataTableOutput("sheets")
         )# tabPanel
-    )# tabsetPanel
+    ),# tabsetPanel
+    
+    
+    fluidRow(title = "Outputs",
+             column(4,
+                    verbatimTextOutput("lm")
+             ),
+             column(4,
+                    plotOutput("residual")
+             ),
+             column(4,
+                    plotOutput("qqplot")
+             )
+                 
+    ) #fluidRow
+
 )# fluidPage
 
 
 # Output
 server <- function(input, output) {
-    fa <- reactive({
-        validate(is.factor(estate[[input$var1]]), "can not use log"
-        )
-    })
+    #fa <- reactive({
+        #validate(is.factor(estate[[input$var1]]), "can not use log"
+        #)
+   # })
     
     output$plot1 <- renderPlot({
         pl1 <- ggplot(estate, aes(x = !!input$var1))
@@ -182,13 +199,30 @@ server <- function(input, output) {
             pl2 <- pl2 + geom_jitter()
         }
         pl2
-    })# renderPlot
+    })# renderPlot (End of second table)
     
     output$sheets <- renderDataTable({
             keep(estate, ~ typeof(.) == "double")
         
     })
     
+# extra credit
+# model <- (log(estate[[input$var2Y]] ~ log(estate[[input$var2X]])
+    output$lm <- renderPrint({
+        if(is.numeric(estate[[input$var2X]]) & 
+           is.numeric(estate[[input$var2Y]]) &
+           input$log2X & 
+           input$log2Y & 
+           input$OLS){
+           
+            #estate %>% 
+                #select(input$var2X,input$var2Y) %>%
+                #log() -> RegData
+            summary(lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]])))
+            
+        
+        }
+    })
     
 }# server 
 
