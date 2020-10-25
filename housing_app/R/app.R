@@ -8,7 +8,10 @@ library(tidyverse)
 estate <- read_csv("../data/estate.csv",
                    col_types = cols("AC" = col_factor(),
                                     "Pool" = col_factor(),
-                                    "Highway" = col_factor())) %>%
+                                    "Highway" = col_factor(),
+                                    "Style" = col_character()
+                                    )
+                   ) %>%
     mutate(Price = Price/1000) %>%
     rename("Price($K)" = "Price")  %>%
     mutate(AC = fct_recode(AC, "AC" = "1", "No AC" = "0"),
@@ -229,11 +232,14 @@ server <- function(input, output) {
            input$log2X & 
            input$log2Y & 
            input$OLS){
-            model <- lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]]))
-            modf <- fortify(model)
-            ggplot(model, aes(x = .fitted, y = .resid)) + geom_point()
-    
-
+            model <- augment(lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]])))
+            model %>%
+                ggplot(aes(x = .fitted, y = .resid)) + 
+                geom_point() +
+                labs(title = "Residuals vs Fitted",
+                     x = "x",
+                     y = "y")
+                
     
         }
     })#renderPlot

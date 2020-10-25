@@ -37,7 +37,8 @@ estate
  estate %>% 
   select(Area,Year) %>%
     log() -> RegData
-summary(lm(Area~Year, data = RegData))
+augment(lm(Area~Year, data = RegData)) %>%
+  ggplot(aes(x = .fitted, y = .resid)) + geom_point()
 
 ```
 
