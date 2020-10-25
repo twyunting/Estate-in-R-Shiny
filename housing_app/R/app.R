@@ -4,6 +4,7 @@ library(shiny)
 library(tidyverse)
 
 # Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
+
 estate <- read_csv("../data/estate.csv",
                    col_types = cols("AC" = col_factor(),
                                     "Pool" = col_factor(),
@@ -13,6 +14,9 @@ estate <- read_csv("../data/estate.csv",
     mutate(AC = fct_recode(AC, "AC" = "1", "No AC" = "0"),
            Pool = fct_recode(Pool, "Pool" = "1", "No Pool" = "0"),
            Highway = fct_recode(Highway, "Adjacent" = "1", "No Adjacent" = "0")) -> estate
+# no NAs
+# estate %>% 
+    # summarize(across(everything(), ~sum(is.na(.))))
 
 
 ui <- fluidPage(
@@ -58,7 +62,8 @@ ui <- fluidPage(
         )# tabPanel
     ),# tabsetPanel
     
-    
+ # extra credit - input
+ 
     fluidRow(title = "Outputs",
              column(4,
                     verbatimTextOutput("lm")
@@ -66,7 +71,6 @@ ui <- fluidPage(
              column(4,
                     plotOutput("residual")
              ),
-             column(4),
              column(4,
                     plotOutput("qq")
              )
@@ -207,7 +211,7 @@ server <- function(input, output) {
         
     })
     
-# extra credit
+# extra credit - output
 
     output$lm <- renderPrint({
         if(is.numeric(estate[[input$var2X]]) & 
@@ -219,6 +223,22 @@ server <- function(input, output) {
         }
     })#renderPrint
     
+    output$residual <- renderPlot({
+        if(is.numeric(estate[[input$var2X]]) & 
+           is.numeric(estate[[input$var2Y]]) &
+           input$log2X & 
+           input$log2Y & 
+           input$OLS){
+            model <- lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]]))
+            modf <- fortify(model)
+            ggplot(model, aes(x = .fitted, y = .resid)) + geom_point()
+    
+
+    
+        }
+    })#renderPlot
+    
+    
     output$qq <- renderPlot({
         if(is.numeric(estate[[input$var2X]]) & 
            is.numeric(estate[[input$var2Y]]) &
@@ -227,10 +247,10 @@ server <- function(input, output) {
            input$OLS){
             estate %>%
                 select(input$var2Y) %>%
-                log() %>%
-                ggplot() +
-                geom_qq(aes(sample = !!input$var2Y)) +
-                geom_abline(color = "black", linetype = "dashed", size = 1) +
+                log() -> qqData
+                ggplot(aes(sample = !!input$var2Y), data = qqData) +
+                geom_qq() +
+                geom_abline(color = "black") +
                 ggtitle("QQ Plot")
         }
     })# renderPlot
