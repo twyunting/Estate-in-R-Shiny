@@ -219,8 +219,6 @@ server <- function(input, output) {
     output$lm <- renderPrint({
         if(is.numeric(estate[[input$var2X]]) & 
            is.numeric(estate[[input$var2Y]]) &
-           input$log2X & 
-           input$log2Y & 
            input$OLS){
             summary(lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]])))
         }
@@ -229,8 +227,6 @@ server <- function(input, output) {
     output$residual <- renderPlot({
         if(is.numeric(estate[[input$var2X]]) & 
            is.numeric(estate[[input$var2Y]]) &
-           input$log2X & 
-           input$log2Y & 
            input$OLS){
             model <- augment(lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]])))
             model %>%
@@ -239,8 +235,6 @@ server <- function(input, output) {
                 labs(title = "Residuals vs Fitted",
                      x = "x",
                      y = "y")
-                
-    
         }
     })#renderPlot
     
@@ -248,16 +242,14 @@ server <- function(input, output) {
     output$qq <- renderPlot({
         if(is.numeric(estate[[input$var2X]]) & 
            is.numeric(estate[[input$var2Y]]) &
-           input$log2X & 
-           input$log2Y & 
            input$OLS){
-            estate %>%
-                select(input$var2Y) %>%
-                log() -> qqData
-                ggplot(aes(sample = !!input$var2Y), data = qqData) +
-                geom_qq() +
-                geom_abline(color = "black") +
-                ggtitle("QQ Plot")
+            model <- augment(lm(log(estate[[input$var2Y]]) ~ log(estate[[input$var2X]])))
+            model %>%
+                ggplot() + 
+                ggtitle("QQ Plot") +
+                geom_qq(aes(sample = .resid)) +
+                geom_qq_line(aes(sample = .resid))
+            
         }
     })# renderPlot
     
