@@ -185,7 +185,8 @@ server <- function(input, output) {
     })# renderPlot
     
     output$sheets <- renderDataTable({
-        estate
+            keep(estate, ~ typeof(.) == "double")
+        
     })
     
     
