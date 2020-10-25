@@ -83,7 +83,7 @@ server <- function(input, output) {
         
     output$table1 <- renderTable({
         if(is.numeric(estate[[input$var1]])){
-           if(input$log1 & !(fa())){ #test
+           if(input$log1){ #test
                estate %>%
                    select(input$var1) %>% #test
                    log() %>%
@@ -110,41 +110,49 @@ server <- function(input, output) {
         pl2 <- ggplot(estate, aes(x = !!input$var2X, y = !!input$var2Y))
         if(is.numeric(estate[[input$var2X]]) & is.numeric(estate[[input$var2Y]])){
             if(input$OLS){
-                if(input$log2X && input$log2Y){
+                if(input$log2X & input$log2Y){
                     pl2 <- pl2 + 
                         geom_point() +
                         scale_x_log10() +
                         scale_y_log10() +
-                        geom_smooth(method = lm, se = FALSE)
+                        geom_smooth(method = lm, se = FALSE) +
+                        labs(x = paste("Log(",input$var2X,")")) +
+                        labs(y = paste("Log(",input$var2Y,")"))
                 }else if(input$log2X){
                     pl2 <- pl2 + 
                         geom_point() +
                         scale_x_log10() +
-                        geom_smooth(method = lm, se = FALSE)
+                        geom_smooth(method = lm, se = FALSE) +
+                        labs(x = paste("Log(",input$var2X,")")) 
                 }else if(input$log2Y){
                     pl2 <- pl2 + 
                         geom_point() +
                         scale_y_log10() +
-                        geom_smooth(method = lm, se = FALSE)
+                        geom_smooth(method = lm, se = FALSE) +
+                        labs(y = paste("Log(",input$var2Y,")"))
                 }else{
                     pl2 <- pl2 + 
                         geom_point() +
                         geom_smooth(method = lm, se = FALSE)
                 }
             }else{
-                if(input$log2X && input$log2Y){
+                if(input$log2X & input$log2Y){
                     pl2 <- pl2 + 
                         geom_point() +
                         scale_x_log10() +
-                        scale_y_log10() 
+                        scale_y_log10() +
+                        labs(x = paste("Log(",input$var2X,")")) +
+                        labs(y = paste("Log(",input$var2Y,")"))
                 }else if(input$log2X){
                     pl2 <- pl2 + 
                         geom_point() +
-                        scale_x_log10()
+                        scale_x_log10() +
+                        labs(x = paste("Log(",input$var2X,")"))
                 }else if(input$log2Y){
                     pl2 <- pl2 + 
                         geom_point() +
-                        scale_y_log10()
+                        scale_y_log10() +
+                        labs(y = paste("Log(",input$var2Y,")"))
                 }else{
                     pl2 <- pl2 + geom_point()
                 }
@@ -153,7 +161,8 @@ server <- function(input, output) {
             if(input$log2X){
                 pl2 <- pl2 + 
                     geom_boxplot() +
-                    scale_x_log10()
+                    scale_x_log10() +
+                    labs(x = paste("Log(",input$var2X,")"))
             }else{
                 pl2 <- pl2 + 
                     geom_boxplot()
@@ -163,7 +172,8 @@ server <- function(input, output) {
             if(input$log2Y){
                 pl2 <- pl2 +
                     geom_boxplot() +
-                    scale_y_log10()
+                    scale_y_log10() +
+                    labs(y = paste("Log(",input$var2Y,")"))
             }else{
                 pl2 <- pl2 + 
                     geom_boxplot()
