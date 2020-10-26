@@ -9,7 +9,7 @@ estate <- read_csv("../data/estate.csv",
                    col_types = cols("AC" = col_factor(),
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor(),
-                                    "Style" = col_character()
+                                    "Style" = col_factor()
                                     )
                    ) %>%
     mutate(Price = Price/1000) %>%
@@ -17,7 +17,8 @@ estate <- read_csv("../data/estate.csv",
     mutate(AC = fct_recode(AC, "AC" = "1", "No AC" = "0"),
            Pool = fct_recode(Pool, "Pool" = "1", "No Pool" = "0"),
            Highway = fct_recode(Highway, "Adjacent" = "1", "No Adjacent" = "0")) -> estate
-# no NAs
+
+# check NAs (no any NA)
 # estate %>% 
     # summarize(across(everything(), ~sum(is.na(.))))
 
@@ -238,7 +239,6 @@ server <- function(input, output) {
         }
     })#renderPlot
     
-    
     output$qq <- renderPlot({
         if(is.numeric(estate[[input$var2X]]) & 
            is.numeric(estate[[input$var2Y]]) &
@@ -249,7 +249,6 @@ server <- function(input, output) {
                 ggtitle("QQ Plot") +
                 geom_qq(aes(sample = .resid)) +
                 geom_qq_line(aes(sample = .resid))
-            
         }
     })# renderPlot
     
