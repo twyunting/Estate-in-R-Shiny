@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
+library(broom)
 mpg %>%
   select_if(is.character) 
 ```
@@ -21,7 +22,7 @@ mtcars
 - Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
 ```{r}
 # Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
-estate <- read_csv("../../housing_app/data/estate.csv",
+estate <- read_csv("../housing_app/data/estate.csv",
                    col_types = cols("AC" = col_factor(),
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor())) %>%

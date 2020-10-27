@@ -2,6 +2,7 @@
 
 library(shiny)
 library(tidyverse)
+library(broom)
 
 # Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
 
