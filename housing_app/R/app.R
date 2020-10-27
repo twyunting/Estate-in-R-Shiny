@@ -18,7 +18,7 @@ estate <- read_csv("../data/estate.csv",
            Pool = fct_recode(Pool, "Pool" = "1", "No Pool" = "0"),
            Highway = fct_recode(Highway, "Adjacent" = "1", "No Adjacent" = "0")) -> estate
 
-# check NAs (no any NA)
+# check NAs for the dataset (no any NA)
 # estate %>% 
     # summarize(across(everything(), ~sum(is.na(.))))
 
@@ -86,12 +86,9 @@ ui <- fluidPage(
 
 # Output
 server <- function(input, output) {
-    #fa <- reactive({
-        #validate(is.factor(estate[[input$var1]]), "can not use log"
-        #)
-   # })
     
     output$plot1 <- renderPlot({
+        
         pl1 <- ggplot(estate, aes(x = !!input$var1))
         if(is.numeric(estate[[input$var1]])){
             if(input$log1){ #test
@@ -102,9 +99,16 @@ server <- function(input, output) {
                 pl1 <- pl1 + geom_histogram(bins = input$bins)
             }
         }else{
+            if(input$log1){
+                validate(
+                    need(is.double(estate[[input$var1]]),
+                         "Hi User! The variable is not numeric.")
+                )   
+            }
             pl1 <- pl1 + geom_bar()
         }
         pl1
+        
     })# renderplot
         
     output$table1 <- renderTable({
