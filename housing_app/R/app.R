@@ -193,10 +193,16 @@ server <- function(input, output) {
                     geom_boxplot() +
                     scale_x_log10() +
                     labs(x = paste("Log(",input$var2X,")"))
+            }else if(input$log2Y){
+                validate(
+                    need(is.double(estate[[input$var2Y]]),
+                         "Hi User! The Y variable is not numeric.")
+                ) 
             }else{
                 pl2 <- pl2 + 
-                    geom_boxplot()
+                geom_boxplot()  
             }
+        
             
         }else if(is.numeric(estate[[input$var2Y]])){
             if(input$log2Y){
@@ -204,12 +210,35 @@ server <- function(input, output) {
                     geom_boxplot() +
                     scale_y_log10() +
                     labs(y = paste("Log(",input$var2Y,")"))
+            }else if(input$log2X){
+                validate(
+                    need(is.double(estate[[input$var2X]]),
+                         "Hi User! The X variable is not numeric.")
+                ) 
             }else{
                 pl2 <- pl2 + 
-                    geom_boxplot()
+                geom_boxplot()
             }
+        
         }else{
-            pl2 <- pl2 + geom_jitter()
+            if(input$log2X & input$log2Y){
+                validate(
+                    need(is.double(estate[[input$var2X]]&estate[[input$var2Y]]),
+                         "Hi User! The variable is not numeric.")
+                )  
+            }else if(input$log2X){
+                validate(
+                    need(is.double(estate[[input$var2X]]),
+                         "Hi User! The variable is not numeric.")
+                )
+            }else if(input$log2Y){
+                validate(
+                    need(is.double(estate[[input$var2Y]]),
+                         "Hi User! The variable is not numeric.")
+                )
+            }else{
+                pl2 <- pl2 + geom_jitter()
+            }
         }
         pl2
     })# renderPlot (End of second table)
