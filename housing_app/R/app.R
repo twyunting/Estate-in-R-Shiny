@@ -187,35 +187,49 @@ server <- function(input, output) {
                     pl2 <- pl2 + geom_point()
                 }
             }# OLS
-        }else if(is.numeric(estate[[input$var2X]])){
-            if(input$log2X){
-                pl2 <- pl2 + 
-                    geom_boxplot() +
-                    scale_x_log10() +
-                    labs(x = paste("Log(",input$var2X,")"))
+        }else if(is.numeric(estate[[input$var2X]]) & !is.numeric(estate[[input$var2Y]])){
+            if(input$log2X & input$log2Y){
+                validate(
+                    need(is.double(estate[[input$var2X]]) & is.double(estate[[input$var2Y]]),
+                         "Hi User! The Y variable is not numeric.")
+                )
             }else if(input$log2Y){
                 validate(
                     need(is.double(estate[[input$var2Y]]),
                          "Hi User! The Y variable is not numeric.")
                 ) 
-            }else{
+            }else if(input$log2X){
+                pl2 <- pl2 + 
+                    geom_boxplot() +
+                    scale_x_log10() +
+                    labs(x = paste("Log(",input$var2X,")"))
+            }
+            else{
                 pl2 <- pl2 + 
                 geom_boxplot()  
             }
         
             
-        }else if(is.numeric(estate[[input$var2Y]])){
-            if(input$log2Y){
+        }else if(!is.numeric(estate[[input$var2X]]) & is.numeric(estate[[input$var2Y]])){
+            if(input$log2X & input$log2Y){
                 pl2 <- pl2 +
-                    geom_boxplot() +
-                    scale_y_log10() +
-                    labs(y = paste("Log(",input$var2Y,")"))
+                validate(
+                    need(is.double(estate[[input$var2X]]) & is.double(estate[[input$var2Y]]),
+                         "Hi User! The X variable is not numeric.")
+                ) 
             }else if(input$log2X){
                 validate(
                     need(is.double(estate[[input$var2X]]),
                          "Hi User! The X variable is not numeric.")
                 ) 
-            }else{
+            }else if(input$log2Y){
+                pl2 <- pl2 + 
+                geom_boxplot() +
+                    scale_y_log10() +
+                    labs(y = paste("Log(",input$var2Y,")"))
+                
+            }
+            else{
                 pl2 <- pl2 + 
                 geom_boxplot()
             }
@@ -246,7 +260,7 @@ server <- function(input, output) {
     output$sheets <- renderDataTable({
             keep(estate, ~ typeof(.) == "double")
         
-    })
+    })# renderDataTable
     
 # extra credit - output
 
