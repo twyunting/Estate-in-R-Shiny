@@ -1,12 +1,12 @@
 # Yunting Chiu
-
 library(shiny)
 library(tidyverse)
 library(broom)
 
+
 # Transform the data so AC, Pool and Highway are factors and Price is in thousands of dollars.
 
-estate <- read_csv("../data/estate.csv",
+estate <- read_csv("estate.csv",
                    col_types = cols("AC" = col_factor(),
                                     "Pool" = col_factor(),
                                     "Highway" = col_factor(),
